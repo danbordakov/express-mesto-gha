@@ -59,7 +59,7 @@ module.exports.updateUser = (req, res) => {
     name: "Обновлённое тестовое имя",
     about: "Обновлённое тестовое описание",
   })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
