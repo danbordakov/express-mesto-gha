@@ -17,7 +17,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((users) => res.send({ data: users }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_NOT_FOUND).send({
