@@ -35,9 +35,17 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({ message: "Произошла ошибка по юзеру" })
-    );
+    .catch((err) => {
+      if ((err.name = "CastError" || "ValidationError")) {
+        return res.status(HTTP_STATUS_BAD_REQUEST).send({
+          message: "Переданы некорректные данные при создании пользователя",
+        });
+      } else {
+        return res.status(HTTP_STATUS_SERVER_ERROR).send({
+          message: "Ошибка на стороне сервера",
+        });
+      }
+    });
 };
 
 module.exports.updateUser = (req, res) => {
