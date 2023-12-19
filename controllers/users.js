@@ -7,7 +7,7 @@ const {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ users }))
+    .then((users) => res.send({ data: users }))
     .catch((err) =>
       res
         .status(HTTP_STATUS_SERVER_ERROR)
@@ -17,7 +17,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((users) => res.send({ users }))
+    .then((users) => res.send({ data: users }))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_NOT_FOUND).send({
