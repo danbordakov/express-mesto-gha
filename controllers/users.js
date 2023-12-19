@@ -17,11 +17,16 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(() =>
+      res.status(HTTP_STATUS_NOT_FOUND).send({
+        message: "Пользователь по указанному ID не найден",
+      })
+    )
     .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
-        return res.status(HTTP_STATUS_NOT_FOUND).send({
-          message: "Пользователь по указанному ID не найден",
+        return res.status(HTTP_STATUS_BAD_REQUEST).send({
+          message: "Указан некорректный ID",
         });
       } else {
         return res.status(HTTP_STATUS_SERVER_ERROR).send({
