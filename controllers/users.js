@@ -21,7 +21,7 @@ module.exports.getUserById = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(HTTP_STATUS_NOT_FOUND).send({
-          message: "Указан несуществующий ID",
+          message: "Указан несуществующий ID пользователя",
         });
       }
       return res.send(user);
