@@ -54,12 +54,8 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  const { name, link } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name: "E", link },
-    { runValidators: true }
-  )
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
@@ -75,11 +71,8 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {
-    //образец поля аватара без фронта
-    avatar: "Обновлённая тестовая ссылка на аватар",
-  })
-    .then((user) => res.send({ data: user }))
+  User.findByIdAndUpdate(req.user._id, { avatar })
+    .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
