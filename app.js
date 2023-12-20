@@ -25,7 +25,9 @@ app.use("/", cardRouter);
 app.use("/", userRouter);
 
 app.use((err, res) => {
-  res.status(HTTP_STATUS_NOT_FOUND).send("Данной страницы не существует");
+  res.status(HTTP_STATUS_NOT_FOUND).send({
+    message: "Данной страницы не существует",
+  });
 });
 
 app.listen(3000, () => {
