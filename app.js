@@ -22,5 +22,5 @@ app.use("/", cardRouter);
 app.use("/", userRouter);
 
 app.listen(3000, () => {
-  console.log("сервер запущен на порт 3000");
+  console.log("Сервер запущен на порт 3000");
 });
