@@ -6,7 +6,7 @@ const cardRouter = require("./routes/cards");
 const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 require("dotenv").config();
 
-const { PORT, DB_PATH } = process.env;
+const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } = process.env;
 
 const app = express();
 
