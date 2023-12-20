@@ -58,7 +58,11 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { runValidators: true, returnDocument: "after" }
+  )
     .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
@@ -74,7 +78,11 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { avatar })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    { runValidators: true, returnDocument: "after" }
+  )
     .then((user) => res.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
