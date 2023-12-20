@@ -4,6 +4,7 @@ const userRouter = require("./routes/users");
 const bodyParser = require("body-parser");
 const cardRouter = require("./routes/cards");
 const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -16,7 +17,7 @@ mongoose
 
 app.use((req, res, next) => {
   req.user = {
-    _id: "6581aa4cd94b67d678453e24", // ID захарден
+    _id: "6582b7ccf4c10ad3fe6c99a6", // ID захарден
   };
   next();
 });
@@ -30,6 +31,6 @@ app.use((err, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Сервер запущен на порт 3000");
+app.listen(PORT, () => {
+  console.log("Сервер запущен");
 });
