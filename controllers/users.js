@@ -1,3 +1,4 @@
+const { response } = require("express");
 const User = require("../models/user");
 const {
   HTTP_STATUS_BAD_REQUEST,
@@ -17,12 +18,14 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    // .orFail(() =>
-    //   res.status(HTTP_STATUS_NOT_FOUND).send({
-    //     message: "Пользователь по указанному ID не найден",
-    //   })
-    // )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        return res.status(HTTP_STATUS_NOT_FOUND).send({
+          message: "Указан несуществующий ID",
+        });
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
