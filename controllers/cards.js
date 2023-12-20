@@ -59,7 +59,14 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res.status(HTTP_STATUS_NOT_FOUND).send({
+          message: "Указан несуществующий ID карточки",
+        });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
@@ -79,7 +86,14 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res.status(HTTP_STATUS_NOT_FOUND).send({
+          message: "Указан несуществующий ID карточки",
+        });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
