@@ -34,11 +34,16 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
+    .orFail(() =>
+      res.status(HTTP_STATUS_NOT_FOUND).send({
+        message: "Карточка по указанному ID не найдена",
+      })
+    )
     .then((cards) => res.send({ cards }))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
-        return res.status(HTTP_STATUS_NOT_FOUND).send({
-          message: " Карточка с указанным ID не найдена",
+        return res.status(HTTP_STATUS_BAD_REQUEST).send({
+          message: "Указан некорректный ID карточки",
         });
       } else {
         return res.status(HTTP_STATUS_SERVER_ERROR).send({
