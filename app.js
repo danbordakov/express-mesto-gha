@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const userRouter = require("./routes/users");
 const bodyParser = require("body-parser");
 const cardRouter = require("./routes/cards");
+const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 
 const app = express();
 
@@ -22,6 +23,10 @@ app.use((req, res, next) => {
 
 app.use("/", cardRouter);
 app.use("/", userRouter);
+
+app.use((err, res) => {
+  res.status(HTTP_STATUS_NOT_FOUND).send("Данной страницы не существует");
+});
 
 app.listen(3000, () => {
   console.log("Сервер запущен на порт 3000");
