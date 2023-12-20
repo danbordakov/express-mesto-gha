@@ -1,19 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const userRouter = require("./routes/users");
 const bodyParser = require("body-parser");
+const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
-const { PORT = 3000 } = process.env;
+require("dotenv").config();
+const { PORT, DB_PATH } = process.env;
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/mestodb")
-  .then(console.log("БД запущена"));
+mongoose.connect(DB_PATH).then(console.log("БД запущена"));
 
 app.use((req, res, next) => {
   req.user = {

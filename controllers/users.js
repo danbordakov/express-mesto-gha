@@ -12,7 +12,7 @@ module.exports.getUsers = (req, res) => {
     .catch((err) =>
       res
         .status(HTTP_STATUS_SERVER_ERROR)
-        .send({ message: "Ошибка на стороне сервера" })
+        .send({ message: "На сервере произошла ошибка" })
     );
 };
 
@@ -31,11 +31,10 @@ module.exports.getUserById = (req, res) => {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: "Указан некорректный ID",
         });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
       }
+      return res.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
 };
 
@@ -48,52 +47,47 @@ module.exports.createUser = (req, res) => {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: "Переданы некорректные данные при создании пользователя",
         });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
       }
+      return res.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
 };
 
-module.exports.updateUser = (req, res) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { runValidators: true, returnDocument: "after" }
-  )
-    .then((user) => res.send(user))
+function updateUserInfo(field, resEx, reqEx, badRequestMessage) {
+  User.findByIdAndUpdate(reqEx.user._id, field, {
+    runValidators: true,
+    returnDocument: "after",
+  })
+    .then((user) => resEx.send(user))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
-        return res.status(HTTP_STATUS_BAD_REQUEST).send({
-          message: "Переданы некорректные данные при обновлении профиля",
-        });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
+        return resEx
+          .status(HTTP_STATUS_BAD_REQUEST)
+          .send({ message: badRequestMessage });
       }
+      return resEx.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
+}
+
+module.exports.updateUser = (req, res) => {
+  const { name, about } = req.body;
+  updateUserInfo(
+    { name, about },
+    res,
+    req,
+    "Переданы некорректные данные при обновлении пользователя"
+  );
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
+  updateUserInfo(
     { avatar },
-    { runValidators: true, returnDocument: "after" }
-  )
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if ((err.name = "CastError" || "ValidationError")) {
-        return res.status(HTTP_STATUS_BAD_REQUEST).send({
-          message: "Переданы некорректные данные при обновлении аватара",
-        });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
-      }
-    });
+    res,
+    req,
+    "Переданы некорректные данные при обновлении аватара пользователя"
+  );
 };

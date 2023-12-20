@@ -10,15 +10,14 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send(card))
     .catch((err) => {
-      if ((err.name = "CastError" || "ValidationError")) {
+      if ((err.name = "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: "Переданы некорректные данные при создании карточки",
         });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
       }
+      return res.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
 };
 
@@ -28,7 +27,7 @@ module.exports.getCards = (req, res) => {
     .catch((err) =>
       res
         .status(HTTP_STATUS_BAD_REQUEST)
-        .send({ message: "Ошибка на стороне сервера" })
+        .send({ message: "На сервере произошла ошибка" })
     );
 };
 
@@ -43,15 +42,14 @@ module.exports.deleteCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if ((err.name = "CastError" || "ValidationError")) {
+      if ((err.name = "CastError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: "Указан некорректный ID карточки",
         });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
       }
+      return res.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
 };
 
@@ -70,15 +68,14 @@ module.exports.likeCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if ((err.name = "CastError" || "ValidationError")) {
+      if ((err.name = "CastError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: "Переданы некорректные данные для постановки лайка",
         });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
       }
+      return res.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
 };
 
@@ -97,14 +94,13 @@ module.exports.dislikeCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if ((err.name = "CastError" || "ValidationError")) {
+      if ((err.name = "CastError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: "Переданы некорректные данные для снятия лайка",
         });
-      } else {
-        return res.status(HTTP_STATUS_SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера",
-        });
       }
+      return res.status(HTTP_STATUS_SERVER_ERROR).send({
+        message: "На сервере произошла ошибка",
+      });
     });
 };
