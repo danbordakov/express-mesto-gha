@@ -8,7 +8,7 @@ const {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if ((err.name = "CastError" || "ValidationError")) {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
@@ -24,7 +24,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ cards }))
+    .then((cards) => res.send(cards))
     .catch((err) =>
       res
         .status(HTTP_STATUS_BAD_REQUEST)
