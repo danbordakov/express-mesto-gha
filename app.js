@@ -3,34 +3,35 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
+const { login, createUser } = require("./controllers/users");
 const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 require("dotenv").config();
+const auth = require("./middlewares/auth");
+const cookieParser = require("cookie-parser");
 
-const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } = process.env;
+const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } =
+  process.env;
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 mongoose.connect(DB_PATH).then(console.log("БД запущена"));
 
-app.use((req, res, next) => {
-	req.user = {
-		_id: "6582b7ccf4c10ad3fe6c99a6", // ID захарден
-	};
-	next();
-});
+app.post("/signin", login);
+app.post("/signup", createUser);
 
-app.use("/", cardRouter);
-app.use("/", userRouter);
+app.use("/", auth, cardRouter);
+app.use("/", auth, userRouter);
 
 app.use((err, res) => {
-	res.status(HTTP_STATUS_NOT_FOUND).send({
-		message: "Данной страницы не существует",
-	});
+  res.status(HTTP_STATUS_NOT_FOUND).send({
+    message: "Данной страницы не существует",
+  });
 });
 
 app.listen(PORT, () => {
-	console.log("Сервер запущен");
+  console.log("Сервер запущен");
 });
