@@ -1,4 +1,3 @@
-const { endianness } = require("os");
 const Card = require("../models/card");
 const {
   HTTP_STATUS_BAD_REQUEST,
