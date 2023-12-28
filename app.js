@@ -1,5 +1,3 @@
-const { HTTP_STATUS_NOT_FOUND, HTTP_STATUS_INTERNAL_SERVER_ERROR } =
-  require("http2").constants;
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -9,6 +7,7 @@ const { errors } = require("celebrate");
 const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { login, createUser } = require("./controllers/users");
+const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 require("dotenv").config();
 const auth = require("./middlewares/auth");
 
@@ -21,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect(DB_PATH);
+mongoose.connect(DB_PATH).then(console.log("БД запущена"));
 
 app.post(
   "/signin",
@@ -66,14 +65,13 @@ app.use((err, res) => {
 app.use(errors());
 
 // Централизованная обработка ошибок
-app.use((err, req, res) => {
-  const { statusCode = HTTP_STATUS_INTERNAL_SERVER_ERROR, message } = err;
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
   res.status(statusCode).send({
-    message:
-      statusCode === HTTP_STATUS_INTERNAL_SERVER_ERROR
-        ? "На сервере произошла ошибка"
-        : message,
+    message: statusCode === 500 ? "На сервере произошла ошибка" : message,
   });
 });
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log("Сервер запущен");
+});
