@@ -8,6 +8,7 @@ const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 require("dotenv").config();
 const auth = require("./middlewares/auth");
 const cookieParser = require("cookie-parser");
+const { celebrate, Joi } = require("celebrate");
 
 const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } =
   process.env;
@@ -20,11 +21,35 @@ app.use(cookieParser());
 
 mongoose.connect(DB_PATH).then(console.log("БД запущена"));
 
-app.post("/signin", login);
-app.post("/signup", createUser);
+app.post(
+  "/signin",
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  login
+);
 
-app.use("/", auth, cardRouter);
-app.use("/", auth, userRouter);
+app.post(
+  "/signup",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().min(2).max(30),
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  createUser
+);
+
+app.use(auth);
+
+app.use("/", cardRouter);
+app.use("/", userRouter);
 
 app.use((err, res) => {
   res.status(HTTP_STATUS_NOT_FOUND).send({
