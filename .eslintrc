@@ -22,7 +22,7 @@
         ],
         "linebreak-style": [
             "error",
-            "windows"
+            "unix"
         ],
         "quotes": [
             "error",
@@ -34,6 +34,9 @@
         ],
         "no-underscore-dangle": [
           "error",{"allow":["_id"]}
+        ],
+        "no-tabs": [
+          "error", { "allowIndentationTabs": true }
         ]
     }
 }
