@@ -1,7 +1,7 @@
+const Card = require("../models/card");
 const BadRequestError = require("../errors/bad-request-error");
 const ForbiddenError = require("../errors/forbidden-error");
 const NotFoundError = require("../errors/not-found-error");
-const Card = require("../models/card");
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -23,22 +23,24 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId).then((card) => {
-    if (card.owner.valueOf() != req.user._id) {
-      throw new ForbiddenError("Не ваша карточка");
-    } else {
-      Card.findByIdAndDelete(req.params.cardId)
-        .then((card) => {
-          if (!card) {
-            throw new NotFoundError("Указан несуществующий ID карточки");
-          }
-          return res.send(card);
-        })
-        .catch((err) =>
-          next(new BadRequestError("Указан некорректный ID карточки"))
-        );
-    }
-  });
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (card.owner.valueOf() != req.user._id) {
+        throw new Error();
+      } else {
+        Card.findByIdAndDelete(req.params.cardId)
+          .then((card) => {
+            if (!card) {
+              throw new NotFoundError("Указан несуществующий ID карточки");
+            }
+            return res.send(card);
+          })
+          .catch((err) =>
+            next(new BadRequestError("Указан некорректный ID карточки"))
+          );
+      }
+    })
+    .catch((err) => next(new ForbiddenError("Не ваша карточка")));
 };
 
 module.exports.likeCard = (req, res, next) => {

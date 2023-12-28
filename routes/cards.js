@@ -15,8 +15,6 @@ cardRouter.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30).required(),
       link: Joi.string()
-        .min(2)
-        .max(30)
         .regex(/^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/)
         .required(),
     }),

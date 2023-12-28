@@ -26,10 +26,9 @@ userRouter.patch(
   "/users/me/avatar",
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string()
-        .min(2)
-        .max(30)
-        .regex(/^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/),
+      avatar: Joi.string().regex(
+        /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/
+      ),
     }),
   }),
   updateUserAvatar
