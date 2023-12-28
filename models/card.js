@@ -20,6 +20,7 @@ const cardSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      length: 24,
     },
     likes: [
       {

@@ -12,16 +12,22 @@ module.exports.getUsers = (req, res, next) => {
     .catch((err) => next());
 };
 
-module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+module.exports.getUserById = (req, res, next) =>
+  User.findById({ _id: req.params.userId })
     .then((user) => {
+      // console.log(user);
       if (!user) {
         throw new NotFoundError("Указан несуществующий ID пользователя");
       }
-      return res.send(user);
+      res.send(user);
     })
-    .catch((err) => next(new BadRequestError("Указан некорректный ID")));
-};
+    .catch(next);
+// .catch((err) => {
+//   if ((err.name = "CastError")) {
+//     next(new BadRequestError("Указан некорректный ID"));
+//   }
+// });
+// .catch((err) => next(new BadRequestError("Указан некорректный ID")));
 
 module.exports.getAdminUser = (req, res, next) => {
   User.findById(req.user._id)

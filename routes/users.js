@@ -1,5 +1,5 @@
-const userRouter = require("express").Router();
 const { celebrate, Joi } = require("celebrate");
+const userRouter = require("express").Router();
 
 const {
   getAdminUser,
@@ -11,6 +11,7 @@ const {
 
 userRouter.get("/users", getUsers);
 userRouter.get("/users/me", getAdminUser);
+
 userRouter.patch(
   "/users/me",
   celebrate({
@@ -21,6 +22,7 @@ userRouter.patch(
   }),
   updateUser
 );
+
 userRouter.get(
   "/users/:userId",
   celebrate({
@@ -30,6 +32,7 @@ userRouter.get(
   }),
   getUserById
 );
+
 userRouter.patch(
   "/users/me/avatar",
   celebrate({
