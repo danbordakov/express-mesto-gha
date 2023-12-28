@@ -35,6 +35,7 @@
         ],
         "no-tabs": [
           "error", { "allowIndentationTabs": true }
-        ]
+        ],
+        "no-unused-vars": "off"
     }
 }
