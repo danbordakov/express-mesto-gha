@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect(DB_PATH).then(console.log("БД запущена"));
+mongoose.connect(DB_PATH);
 
 app.post(
   "/signin",
@@ -72,6 +72,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log("Сервер запущен");
-});
+app.listen(PORT);
