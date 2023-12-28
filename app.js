@@ -9,6 +9,7 @@ require("dotenv").config();
 const auth = require("./middlewares/auth");
 const cookieParser = require("cookie-parser");
 const { celebrate, Joi } = require("celebrate");
+const { errors } = require("celebrate");
 
 const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } =
   process.env;
@@ -56,6 +57,9 @@ app.use((err, res) => {
     message: "Данной страницы не существует",
   });
 });
+
+//Обработка ошибок Celebrate
+app.use(errors());
 
 //Централизованная обработка ошибок
 app.use((err, req, res, next) => {
