@@ -61,6 +61,9 @@ module.exports.createUser = async (req, res, next) => {
 			),
 		);
 	}
+
+	return null;
+	// иначе Eslint ругается
 };
 
 // общая функция обновления
@@ -118,4 +121,5 @@ module.exports.login = async (req, res, next) => {
 	} catch (error) {
 		next(new UnauthorizedError("Неправильные почта или пароль"));
 	}
+	return null;
 };
