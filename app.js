@@ -1,3 +1,4 @@
+const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -10,7 +11,6 @@ const { login, createUser } = require("./controllers/users");
 const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 require("dotenv").config();
 const auth = require("./middlewares/auth");
-
 const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } =
   process.env;
 
