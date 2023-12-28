@@ -11,8 +11,28 @@ const {
 
 userRouter.get("/users", getUsers);
 userRouter.get("/users/me", getAdminUser);
-userRouter.patch("/users/me", updateUser);
+userRouter.patch(
+  "/users/me",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+    }),
+  }),
+  updateUser
+);
 userRouter.get("/users/:userId", getUserById);
-userRouter.patch("/users/me/avatar", updateUserAvatar);
+userRouter.patch(
+  "/users/me/avatar",
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string()
+        .min(2)
+        .max(30)
+        .regex(/^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/),
+    }),
+  }),
+  updateUserAvatar
+);
 
 module.exports = userRouter;
