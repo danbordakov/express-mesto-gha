@@ -49,8 +49,31 @@ app.post(
 
 app.use(auth);
 
-app.use("/", cardRouter);
-app.use("/", userRouter);
+app.use(
+  "/",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      link: Joi.string().required(),
+      owner: Joi.required(),
+      likes: Joi.required(),
+    }),
+  }),
+  cardRouter
+);
+app.use(
+  "/",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().min(2).max(30),
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  userRouter
+);
 
 app.use((err, res) => {
   res.status(HTTP_STATUS_NOT_FOUND).send({
