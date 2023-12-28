@@ -7,7 +7,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send(card))
-    .catch((err) =>
+    .catch(() =>
       next(
         new BadRequestError(
           "Переданы некорректные данные при создании карточки"
@@ -19,26 +19,26 @@ module.exports.createCard = (req, res, next) => {
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => next());
+    .catch(next);
 };
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .then((card) => {
-      if (card && card.owner.valueOf() != req.user._id) {
+    .then((cardToFind) => {
+      if (cardToFind && cardToFind.owner.valueOf() !== req.user._id) {
         throw new Error();
       } else {
         Card.findByIdAndDelete(req.params.cardId)
-          .then((card) => {
-            if (!card) {
+          .then((cardToDelete) => {
+            if (!cardToDelete) {
               throw new NotFoundError("Указан несуществующий ID карточки");
             }
-            return res.send(card);
+            return res.send(cardToDelete);
           })
           .catch(next);
       }
     })
-    .catch((err) => next(new ForbiddenError("Не ваша карточка")));
+    .catch(() => next(new ForbiddenError("Не ваша карточка")));
 };
 
 module.exports.likeCard = (req, res, next) => {

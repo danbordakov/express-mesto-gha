@@ -1,15 +1,15 @@
+const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const { celebrate, Joi } = require("celebrate");
+const cookieParser = require("cookie-parser");
+const { errors } = require("celebrate");
 const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { login, createUser } = require("./controllers/users");
-const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 require("dotenv").config();
 const auth = require("./middlewares/auth");
-const cookieParser = require("cookie-parser");
-const { celebrate, Joi } = require("celebrate");
-const { errors } = require("celebrate");
 
 const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } =
   process.env;
@@ -61,10 +61,10 @@ app.use((err, res) => {
   });
 });
 
-//Обработка ошибок Celebrate
+// Обработка ошибок Celebrate
 app.use(errors());
 
-//Централизованная обработка ошибок
+// Централизованная обработка ошибок
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({

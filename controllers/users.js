@@ -1,6 +1,6 @@
-const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const User = require("../models/user");
 const BadRequestError = require("../errors/bad-request-error");
 const NotFoundError = require("../errors/not-found-error");
 const ConflictError = require("../errors/conflict-error");
@@ -9,25 +9,18 @@ const UnauthorizedError = require("../errors/unauthorized-error");
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => next());
+    .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) =>
   User.findById({ _id: req.params.userId })
     .then((user) => {
-      // console.log(user);
       if (!user) {
         throw new NotFoundError("Указан несуществующий ID пользователя");
       }
       res.send(user);
     })
     .catch(next);
-// .catch((err) => {
-//   if ((err.name = "CastError")) {
-//     next(new BadRequestError("Указан некорректный ID"));
-//   }
-// });
-// .catch((err) => next(new BadRequestError("Указан некорректный ID")));
 
 module.exports.getAdminUser = (req, res, next) => {
   User.findById(req.user._id)
@@ -37,7 +30,7 @@ module.exports.getAdminUser = (req, res, next) => {
       }
       return res.send(user);
     })
-    .catch((err) => next(new BadRequestError("Указан некорректный ID")));
+    .catch(() => next(new BadRequestError("Указан некорректный ID")));
 };
 
 module.exports.createUser = async (req, res, next) => {
@@ -56,7 +49,6 @@ module.exports.createUser = async (req, res, next) => {
       about: user.about,
       avatar: user.avatar,
       email: user.email,
-      // password: user.password,
     });
   } catch (err) {
     if (err.code === 11000) {
@@ -70,7 +62,7 @@ module.exports.createUser = async (req, res, next) => {
   }
 };
 
-//общая функция обновления
+// общая функция обновления
 function updateUserInfo(field, resEx, reqEx, badRequestMessage, nextEx) {
   User.findByIdAndUpdate(reqEx.user._id, field, {
     runValidators: true,
