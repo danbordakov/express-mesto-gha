@@ -32,9 +32,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ForbiddenError("Указан ID чужой карточки");
       } else {
         Card.deleteOne(cardToFind)
-          .then(() => {
-            return res.send(cardToFind);
-          })
+          .then(res.send(cardToFind))
           .catch(() =>
             next(new NotFoundError("Указан ID несуществующей карточки"))
           );

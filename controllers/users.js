@@ -12,7 +12,7 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getUserById = (req, res, next) =>
+module.exports.getUserById = (req, res, next) => {
   User.findById({ _id: req.params.userId })
     .then((user) => {
       if (!user) {
@@ -21,6 +21,7 @@ module.exports.getUserById = (req, res, next) =>
       res.send(user);
     })
     .catch(next);
+};
 
 module.exports.getAdminUser = (req, res, next) => {
   User.findById(req.user._id)
