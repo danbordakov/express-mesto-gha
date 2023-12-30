@@ -10,14 +10,15 @@ const cardRouter = require("./routes/cards");
 const { login, createUser } = require("./controllers/users");
 require("dotenv").config();
 const auth = require("./middlewares/auth");
+const NotFoundError = require("./errors/not-found-error");
 
 const { PORT = 3000, DB_PATH = "mongodb://127.0.0.1:27017/mestodb" } =
   process.env;
 
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 mongoose.connect(DB_PATH);
@@ -51,14 +52,11 @@ app.post(
 );
 
 app.use(auth);
-
+app.use("/users", userRouter);
 app.use("/", cardRouter);
-app.use("/", userRouter);
 
-app.use((err, res) => {
-  res.status(HTTP_STATUS_NOT_FOUND).send({
-    message: "Данной страницы не существует",
-  });
+app.use("*", (req, res, next) => {
+  next(new NotFoundError("Данной страницы не существует"));
 });
 
 // Обработка ошибок Celebrate
