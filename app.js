@@ -1,10 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const { celebrate, Joi } = require("celebrate");
 const cookieParser = require("cookie-parser");
 const { errors } = require("celebrate");
-const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { login, createUser } = require("./controllers/users");
