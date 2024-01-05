@@ -109,11 +109,12 @@ module.exports.login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      throw new UnauthorizedError("Неправильные почта или пароль");
+      throw new Error("authError");
     }
     const matched = await bcrypt.compare(password, user.password);
+    console.log(matched);
     if (!matched) {
-      throw new UnauthorizedError("Неправильные почта или пароль");
+      throw new Error("authError");
     }
     const token = jwt.sign({ _id: user._id }, "secret-key", {
       expiresIn: "7d",
@@ -123,8 +124,12 @@ module.exports.login = async (req, res, next) => {
       httpOnly: true,
     });
     return res.status(200).send({ message: "Вход выполнен успешно" });
-  } catch (error) {
-    next(new ServerError("На сервере произошла ошибка"));
+  } catch (err) {
+    if (err.message === "authError") {
+      next(new UnauthorizedError("Неправильные почта или пароль"));
+    } else {
+      next(new ServerError("На сервере произошла ошибка"));
+    }
   }
   return null;
 };
