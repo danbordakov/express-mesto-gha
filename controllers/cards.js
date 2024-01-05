@@ -2,24 +2,27 @@ const Card = require("../models/card");
 const BadRequestError = require("../errors/bad-request-error");
 const ForbiddenError = require("../errors/forbidden-error");
 const NotFoundError = require("../errors/not-found-error");
+const ServerError = require("../errors/server-error");
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send(card))
-    .catch(() =>
-      next(
-        new BadRequestError(
+    .then((card) => {
+      if (!card) {
+        throw new BadRequestError(
           "Переданы некорректные данные при создании карточки"
-        )
-      )
-    );
+        );
+      } else {
+        res.send(card);
+      }
+    })
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.deleteCard = (req, res, next) => {
@@ -38,7 +41,7 @@ module.exports.deleteCard = (req, res, next) => {
           );
       }
     })
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -53,7 +56,7 @@ module.exports.likeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -68,5 +71,5 @@ module.exports.dislikeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };

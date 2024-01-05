@@ -5,11 +5,12 @@ const BadRequestError = require("../errors/bad-request-error");
 const NotFoundError = require("../errors/not-found-error");
 const ConflictError = require("../errors/conflict-error");
 const UnauthorizedError = require("../errors/unauthorized-error");
+const ServerError = require("../errors/server-error");
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -20,7 +21,7 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.send(user);
     })
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.getAdminUser = (req, res, next) => {
@@ -31,7 +32,7 @@ module.exports.getAdminUser = (req, res, next) => {
       }
       return res.send(user);
     })
-    .catch(next);
+    .catch(next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.createUser = async (req, res, next) => {
@@ -55,7 +56,7 @@ module.exports.createUser = async (req, res, next) => {
     if (err.code === 11000) {
       next(new ConflictError("Пользователь уже существует"));
     } else {
-      next();
+      next(new ServerError("На сервере произошла ошибка"));
     }
   }
 
@@ -69,8 +70,14 @@ function updateUserInfo(field, resEx, reqEx, badRequestMessage, nextEx) {
     runValidators: true,
     returnDocument: "after",
   })
-    .then((user) => resEx.send(user))
-    .catch(() => nextEx(new BadRequestError(badRequestMessage)));
+    .then((user) => {
+      if (!user) {
+        throw new BadRequestError(badRequestMessage);
+      } else {
+        resEx.send(user);
+      }
+    })
+    .catch(nextEx(new ServerError("На сервере произошла ошибка")));
 }
 
 module.exports.updateUser = (req, res, next) => {
@@ -116,7 +123,7 @@ module.exports.login = async (req, res, next) => {
     });
     return res.status(200).send({ message: "Вход выполнен успешно" });
   } catch (error) {
-    next();
+    next(new ServerError("На сервере произошла ошибка"));
   }
   return null;
 };
