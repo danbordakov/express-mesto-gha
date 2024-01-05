@@ -41,7 +41,13 @@ module.exports.deleteCard = (req, res, next) => {
           );
       }
     })
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => {
+      if (err) {
+        next();
+      } else {
+        next(new ServerError("На сервере произошла ошибка"));
+      }
+    });
 };
 
 module.exports.likeCard = (req, res, next) => {
