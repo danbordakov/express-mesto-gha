@@ -29,8 +29,9 @@ module.exports.getAdminUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError("Указан несуществующий ID пользователя");
+      } else {
+        res.send(user);
       }
-      res.send(user);
     })
     .catch(next(new ServerError("На сервере произошла ошибка")));
 };
