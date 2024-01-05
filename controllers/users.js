@@ -10,7 +10,7 @@ const ServerError = require("../errors/server-error");
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -21,7 +21,7 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.send(user);
     })
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.getAdminUser = (req, res, next) => {
@@ -33,7 +33,7 @@ module.exports.getAdminUser = (req, res, next) => {
         res.send(user);
       }
     })
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.createUser = async (req, res, next) => {
@@ -78,7 +78,7 @@ function updateUserInfo(field, resEx, reqEx, badRequestMessage, nextEx) {
         resEx.send(user);
       }
     })
-    .catch(nextEx(new ServerError("На сервере произошла ошибка")));
+    .catch(() => nextEx(new ServerError("На сервере произошла ошибка")));
 }
 
 module.exports.updateUser = (req, res, next) => {

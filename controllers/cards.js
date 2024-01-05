@@ -16,13 +16,13 @@ module.exports.createCard = (req, res, next) => {
         res.send(card);
       }
     })
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.deleteCard = (req, res, next) => {
@@ -41,7 +41,7 @@ module.exports.deleteCard = (req, res, next) => {
           );
       }
     })
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -56,7 +56,7 @@ module.exports.likeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -71,5 +71,5 @@ module.exports.dislikeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(next(new ServerError("На сервере произошла ошибка")));
+    .catch(() => next(new ServerError("На сервере произошла ошибка")));
 };
