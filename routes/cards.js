@@ -8,7 +8,7 @@ const {
   dislikeCard,
 } = require("../controllers/cards");
 
-cardRouter.get("/cards", getCards);
+cardRouter.get("/", getCards);
 cardRouter.post(
   "/cards",
   celebrate({
@@ -23,7 +23,7 @@ cardRouter.post(
 );
 
 cardRouter.delete(
-  "/cards/:cardId",
+  "/:cardId",
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().hex().required().length(24),
@@ -33,7 +33,7 @@ cardRouter.delete(
 );
 
 cardRouter.put(
-  "/cards/:cardId/likes",
+  "/:cardId/likes",
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().hex().required().length(24),
@@ -42,7 +42,7 @@ cardRouter.put(
   likeCard
 );
 cardRouter.delete(
-  "/cards/:cardId/likes",
+  "/:cardId/likes",
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().hex().required().length(24),

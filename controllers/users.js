@@ -21,7 +21,13 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.send(user);
     })
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => {
+      if (err) {
+        next(err);
+      } else {
+        next(new ServerError("На сервере произошла ошибка"));
+      }
+    });
 };
 
 module.exports.getAdminUser = (req, res, next) => {
@@ -33,7 +39,13 @@ module.exports.getAdminUser = (req, res, next) => {
         res.send(user);
       }
     })
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => {
+      if (err) {
+        next(err);
+      } else {
+        next(new ServerError("На сервере произошла ошибка"));
+      }
+    });
 };
 
 module.exports.createUser = async (req, res, next) => {

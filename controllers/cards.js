@@ -36,14 +36,19 @@ module.exports.deleteCard = (req, res, next) => {
       } else {
         Card.deleteOne(cardToFind)
           .then(res.send(cardToFind))
-          .catch(() =>
-            next(new NotFoundError("Указан ID несуществующей карточки"))
-          );
+          .catch((err) => {
+            if (err) {
+              next;
+            } else {
+              next(new NotFoundError("Указан ID несуществующей карточки"));
+            }
+          });
       }
     })
     .catch((err) => {
+      console.log(err);
       if (err) {
-        next();
+        next(err);
       } else {
         next(new ServerError("На сервере произошла ошибка"));
       }
@@ -62,7 +67,13 @@ module.exports.likeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => {
+      if (err) {
+        next(err);
+      } else {
+        next(new ServerError("На сервере произошла ошибка"));
+      }
+    });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -77,5 +88,11 @@ module.exports.dislikeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => {
+      if (err) {
+        next(err);
+      } else {
+        next(new ServerError("На сервере произошла ошибка"));
+      }
+    });
 };
