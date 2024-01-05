@@ -43,7 +43,7 @@ module.exports.deleteCard = (req, res, next) => {
           .then(res.send(cardToFind))
           .catch((err) => {
             if (err) {
-              next;
+              next(err);
             } else {
               next(new NotFoundError("Указан ID несуществующей карточки"));
             }
@@ -51,7 +51,6 @@ module.exports.deleteCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.log(err);
       if (err) {
         next(err);
       } else {

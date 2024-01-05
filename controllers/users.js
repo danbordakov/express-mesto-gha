@@ -124,7 +124,6 @@ module.exports.login = async (req, res, next) => {
       throw new Error("authError");
     }
     const matched = await bcrypt.compare(password, user.password);
-    console.log(matched);
     if (!matched) {
       throw new Error("authError");
     }
