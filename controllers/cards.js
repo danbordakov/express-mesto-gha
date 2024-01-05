@@ -16,7 +16,13 @@ module.exports.createCard = (req, res, next) => {
         res.send(card);
       }
     })
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => {
+      if (err) {
+        next(err);
+      } else {
+        next(new ServerError("На сервере произошла ошибка"));
+      }
+    });
 };
 
 module.exports.getCards = (req, res, next) => {
