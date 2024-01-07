@@ -14,7 +14,13 @@ module.exports.createCard = (req, res, next) => {
       // }
       res.send(card);
     })
-    .catch((err) => next(err));
+    .catch(() =>
+      next(
+        new BadRequestError(
+          "Переданы некорректные данные при создании карточки"
+        )
+      )
+    );
 };
 
 module.exports.getCards = (req, res, next) => {
