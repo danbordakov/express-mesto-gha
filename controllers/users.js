@@ -71,21 +71,14 @@ module.exports.createUser = async (req, res, next) => {
 };
 
 // общая функция обновления
-function updateUserInfo(
-  field,
-  resEx,
-  reqEx,
-  badRequestMessage,
-  notFoundMessage,
-  nextEx
-) {
+function updateUserInfo(field, resEx, reqEx, badRequestMessage, nextEx) {
   User.findByIdAndUpdate(reqEx.user._id, field, {
     runValidators: true,
     returnDocument: "after",
   })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(notFoundMessage);
+        throw new NotFoundError("Указан несуществующий ID пользователя");
       } else {
         resEx.send(user);
       }
@@ -106,7 +99,6 @@ module.exports.updateUser = (req, res, next) => {
     res,
     req,
     "Переданы некорректные данные при обновлении пользователя",
-    "Указан несуществующий ID пользователя",
     next
   );
 };
@@ -118,7 +110,6 @@ module.exports.updateUserAvatar = (req, res, next) => {
     res,
     req,
     "Переданы некорректные данные при обновлении аватара пользователя",
-    "Указан несуществующий ID пользователя",
     next
   );
 };
