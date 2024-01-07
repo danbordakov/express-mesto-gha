@@ -1,8 +1,8 @@
+const { HTTP_STATUS_BAD_REQUEST } = require("http2").constants;
 const Card = require("../models/card");
 const BadRequestError = require("../errors/bad-request-error");
 const ForbiddenError = require("../errors/forbidden-error");
 const NotFoundError = require("../errors/not-found-error");
-const { HTTP_STATUS_BAD_REQUEST } = require("http2").constants;
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -44,50 +44,39 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true }
-  )
+// общая функция обновления данных карточки (лайк-дизлайк)
+function updateLikeCardInfo(reqEx, resEx, nextEx, like) {
+  let addPull = {};
+  if (like) {
+    addPull = { $addToSet: { likes: reqEx.user._id } };
+  } else {
+    addPull = { $pull: { likes: reqEx.user._id } };
+  }
+
+  Card.findByIdAndUpdate(reqEx.params.cardId, addPull, { new: true })
     .then((card) => {
       if (!card) {
         throw new NotFoundError("Указан несуществующий ID карточки");
       }
-      res.send(card);
+      resEx.send(card);
     })
     .catch((err) => {
       if (err.code === HTTP_STATUS_BAD_REQUEST) {
-        next(
+        nextEx(
           new BadRequestError(
-            "Переданы некорректные данные для постановки лайка"
+            "Переданы некорректные данные для постановки/снятия лайка"
           )
         );
       } else {
-        next(err);
+        nextEx(err);
       }
     });
+}
+
+module.exports.likeCard = (req, res, next) => {
+  updateLikeCardInfo(req, res, next, true);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true }
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError("Указан несуществующий ID карточки");
-      }
-      res.send(card);
-    })
-    .catch((err) => {
-      if (err.code === HTTP_STATUS_BAD_REQUEST) {
-        next(
-          new BadRequestError("Переданы некорректные данные для снятия лайка")
-        );
-      } else {
-        next(err);
-      }
-    });
+  updateLikeCardInfo(req, res, next, false);
 };

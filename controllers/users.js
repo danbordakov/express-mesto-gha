@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { HTTP_STATUS_BAD_REQUEST } = require("http2").constants;
 const User = require("../models/user");
 const BadRequestError = require("../errors/bad-request-error");
 const NotFoundError = require("../errors/not-found-error");
@@ -55,6 +56,13 @@ module.exports.createUser = async (req, res, next) => {
   } catch (err) {
     if (err.code === 11000) {
       next(new ConflictError("Пользователь уже существует"));
+    }
+    if (err.code === HTTP_STATUS_BAD_REQUEST) {
+      next(
+        new BadRequestError(
+          "Переданы некорректные данные при создании пользователя"
+        )
+      );
     } else {
       next(err);
     }
