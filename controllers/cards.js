@@ -2,18 +2,23 @@ const Card = require("../models/card");
 const BadRequestError = require("../errors/bad-request-error");
 const ForbiddenError = require("../errors/forbidden-error");
 const NotFoundError = require("../errors/not-found-error");
+const { HTTP_STATUS_BAD_REQUEST } = require("http2").constants;
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send(card))
-    .catch(() =>
-      next(
-        new BadRequestError(
-          "Переданы некорректные данные при создании карточки"
-        )
-      )
-    );
+    .catch((err) => {
+      if (err.code === HTTP_STATUS_BAD_REQUEST) {
+        next(
+          new BadRequestError(
+            "Переданы некорректные данные при создании карточки"
+          )
+        );
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.getCards = (req, res, next) => {
@@ -51,7 +56,17 @@ module.exports.likeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      if (err.code === HTTP_STATUS_BAD_REQUEST) {
+        next(
+          new BadRequestError(
+            "Переданы некорректные данные для постановки лайка"
+          )
+        );
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -66,5 +81,13 @@ module.exports.dislikeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      if (err.code === HTTP_STATUS_BAD_REQUEST) {
+        next(
+          new BadRequestError("Переданы некорректные данные для снятия лайка")
+        );
+      } else {
+        next(err);
+      }
+    });
 };
