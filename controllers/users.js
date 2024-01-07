@@ -5,12 +5,11 @@ const BadRequestError = require("../errors/bad-request-error");
 const NotFoundError = require("../errors/not-found-error");
 const ConflictError = require("../errors/conflict-error");
 const UnauthorizedError = require("../errors/unauthorized-error");
-const ServerError = require("../errors/server-error");
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => next(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => next(err));
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -21,13 +20,7 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.send(user);
     })
-    .catch((err) => {
-      if (err) {
-        next(err);
-      } else {
-        next(new ServerError("На сервере произошла ошибка"));
-      }
-    });
+    .catch((err) => next(err));
 };
 
 module.exports.getAdminUser = (req, res, next) => {
@@ -39,13 +32,7 @@ module.exports.getAdminUser = (req, res, next) => {
         res.send(user);
       }
     })
-    .catch((err) => {
-      if (err) {
-        next(err);
-      } else {
-        next(new ServerError("На сервере произошла ошибка"));
-      }
-    });
+    .catch((err) => next(err));
 };
 
 module.exports.createUser = async (req, res, next) => {
@@ -69,12 +56,10 @@ module.exports.createUser = async (req, res, next) => {
     if (err.code === 11000) {
       next(new ConflictError("Пользователь уже существует"));
     } else {
-      next(new ServerError("На сервере произошла ошибка"));
+      next(err);
     }
   }
-
   return null;
-  // иначе Eslint ругается
 };
 
 // общая функция обновления
@@ -90,7 +75,7 @@ function updateUserInfo(field, resEx, reqEx, badRequestMessage, nextEx) {
         resEx.send(user);
       }
     })
-    .catch(() => nextEx(new ServerError("На сервере произошла ошибка")));
+    .catch((err) => nextEx(err));
 }
 
 module.exports.updateUser = (req, res, next) => {
@@ -121,11 +106,11 @@ module.exports.login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      throw new Error("authError");
+      throw new UnauthorizedError("Неправильные почта или пароль");
     }
     const matched = await bcrypt.compare(password, user.password);
     if (!matched) {
-      throw new Error("authError");
+      throw new UnauthorizedError("Неправильные почта или пароль");
     }
     const token = jwt.sign({ _id: user._id }, "secret-key", {
       expiresIn: "7d",
@@ -136,11 +121,7 @@ module.exports.login = async (req, res, next) => {
     });
     return res.status(200).send({ message: "Вход выполнен успешно" });
   } catch (err) {
-    if (err.message === "authError") {
-      next(new UnauthorizedError("Неправильные почта или пароль"));
-    } else {
-      next(new ServerError("На сервере произошла ошибка"));
-    }
+    next(err);
   }
   return null;
 };
