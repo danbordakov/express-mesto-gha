@@ -44,7 +44,7 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-// общая функция обновления данных карточки (лайк - дизлайк)
+// общая функция обновления данных карточки (лайк/дизлайк)
 function updateLikeCardInfo(reqEx, resEx, nextEx, like) {
   let addPull = {};
   if (like) {
